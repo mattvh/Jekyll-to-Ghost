@@ -59,21 +59,21 @@ module Jekyll
 				ex_post = {
 					"title" => post.title,
 					"slug" => post.slug,
-					"markdown" => post.content,
-					"html" => converter.convert(post.content),
+					"markdown" => self.rewrite_posturl(post.content),
+					"html" => converter.convert(self.rewrite_posturl(post.content)),
 					"image" => nil,
 					"featured" => 0,
 					"page" => 0,
 					"status" => "published",
-					"language" => "en_US",
+					"language" => "de_DE",
 					"meta_title" => nil,
         			"meta_description" => nil,
         			"author_id" => 1,
-        			"created_at" => post.date.to_i,
+        			"created_at" => post.date.to_i * 1000,
         			"created_by" => 1,
-        			"updated_at" => post.date.to_i,
+        			"updated_at" => post.date.to_i * 1000,
         			"updated_by" => 1,
-        			"published_at" => post.date.to_i,
+        			"published_at" => post.date.to_i * 1000,
         			"published_by" => 1,
         			"tags" => self.process_tags(post.tags, post.categories)
 				}
@@ -122,6 +122,11 @@ module Jekyll
 				})
 			end
 			return tag_array
+		end
+
+		def rewrite_posturl(content)
+			regex = /{%\s*post_url\s*(\d{4})-(\d{2})-(\d{2})-(.+?)\s*%}/
+			return content.gsub(regex, '/\4/')
 		end
 
 
