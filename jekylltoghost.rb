@@ -59,8 +59,8 @@ module Jekyll
 				ex_post = {
 					"title" => post.title,
 					"slug" => post.slug,
-					"markdown" => post.content,
-					"html" => converter.convert(post.content),
+					"markdown" => self.rewrite_posturl(post.content),
+					"html" => converter.convert(self.rewrite_posturl(post.content)),
 					"image" => nil,
 					"featured" => 0,
 					"page" => 0,
@@ -122,6 +122,11 @@ module Jekyll
 				})
 			end
 			return tag_array
+		end
+
+		def rewrite_posturl(content)
+			regex = /{%\s*post_url\s*(\d{4})-(\d{2})-(\d{2})-(.+?)\s*%}/
+			return content.gsub(regex, '/\1/\2/\3/\4/')
 		end
 
 
