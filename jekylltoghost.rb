@@ -1,8 +1,8 @@
 # Jekyll-to-Ghost
-# 
+#
 # This Jekyll plugin exports your Markdown posts into a format that can be easily imported by Ghost.
 # http://ghost.org
-# 
+#
 # Author: Matt Harzewski
 # Copyright: Copyright 2013 Matt Harzewski
 # License: GPLv2 or later
@@ -56,6 +56,9 @@ module Jekyll
 			ex_posts = []
 
 			site.posts.each do |post|
+
+				timestamp = post.date.to_i * 1000
+
 				ex_post = {
 					"title" => post.title,
 					"slug" => post.slug,
@@ -69,22 +72,22 @@ module Jekyll
 					"meta_title" => nil,
         			"meta_description" => nil,
         			"author_id" => 1,
-        			"created_at" => post.date.to_i,
+        			"created_at" => timestamp,
         			"created_by" => 1,
-        			"updated_at" => post.date.to_i,
+        			"updated_at" => timestamp,
         			"updated_by" => 1,
-        			"published_at" => post.date.to_i,
+        			"published_at" => timestamp,
         			"published_by" => 1,
         			"tags" => self.process_tags(post.tags, post.categories)
 				}
 
 				ex_posts.push(ex_post)
-				
+
 			end
 
 			export_object = {
 				"meta" => {
-					"exported_on" => Time.now.to_i,
+					"exported_on" => Time.now.to_i * 1000,
 					"version" => "000"
 				},
 				"data" => {
