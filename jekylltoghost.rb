@@ -126,7 +126,7 @@ module Jekyll
 
 		def rewrite_posturl(content)
 			regex = /{%\s*post_url\s*(\d{4})-(\d{2})-(\d{2})-(.+?)\s*%}/
-			return content.gsub(regex, '/\1/\2/\3/\4/')
+			return content.gsub(regex, '/\4/')
 		end
 
 
