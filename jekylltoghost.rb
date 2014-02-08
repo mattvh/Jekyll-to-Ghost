@@ -47,6 +47,7 @@ module Jekyll
 		def initialize(site)
 			super
 			@tags = []
+			@postTagMap = Hash.new
 		end
 
 
@@ -54,12 +55,14 @@ module Jekyll
 
 			converter = site.getConverterImpl(Jekyll::Converters::Markdown)
 			ex_posts = []
+			id = 0
 
 			site.posts.each do |post|
 
 				timestamp = post.date.to_i * 1000
 
 				ex_post = {
+					"id" => id,
 					"title" => post.title,
 					"slug" => post.slug,
 					"markdown" => post.content,
@@ -77,12 +80,13 @@ module Jekyll
         			"updated_at" => timestamp,
         			"updated_by" => 1,
         			"published_at" => timestamp,
-        			"published_by" => 1,
-        			"tags" => self.process_tags(post.tags, post.categories)
+        			"published_by" => 1
 				}
 
 				ex_posts.push(ex_post)
 
+				self.process_tags(id, post.tags, post.categories)
+				id += 1
 			end
 
 			export_object = {
@@ -92,7 +96,8 @@ module Jekyll
 				},
 				"data" => {
 					"posts" => ex_posts,
-					"tags" => self.tag_objects
+					"tags" => self.tag_objects,
+					"posts_tags" => self.posts_tag_objects
 				}
 			}
 
@@ -101,19 +106,14 @@ module Jekyll
 		end
 
 
-		def process_tags(tags, categories)
+		def process_tags(postId, tags, categories)
 			unique_tags = tags | categories
-			unique_tags.map! do |t|
-				t.chomp(",")
+			unique_tags = unique_tags.map do |t|
+				t = t.chomp(",")
 			end
 			@tags = unique_tags | @tags
-			post_tags = []
-			unique_tags.each do |t|
-				post_tags.push({
-					"name" => t
-				})
-			end
-			return post_tags
+
+			@postTagMap[postId] = unique_tags
 		end
 
 
@@ -130,6 +130,19 @@ module Jekyll
 			return tag_array
 		end
 
+		def posts_tag_objects
+			posts_tag_array = []
+			@postTagMap.each do |post, tags|
+				tags.each do |tag|
+					posts_tag_array.push({
+										"id" => (posts_tag_array.size + 1),
+										"post_id" => post,
+										"tag_id" => @tags.index(tag)
+										})
+				end
+			end
+			return posts_tag_array
+		end
 
 	end
 
