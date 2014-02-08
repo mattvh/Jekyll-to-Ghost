@@ -103,6 +103,9 @@ module Jekyll
 
 		def process_tags(tags, categories)
 			unique_tags = tags | categories
+			unique_tags.map! do |t|
+				t.chomp(",")
+			end
 			@tags = unique_tags | @tags
 			post_tags = []
 			unique_tags.each do |t|
