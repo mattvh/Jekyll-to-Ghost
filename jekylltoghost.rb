@@ -110,6 +110,7 @@ module Jekyll
 			unique_tags = tags | categories
 			unique_tags = unique_tags.map do |t|
 				t = t.chomp(",")
+				t = t.downcase
 			end
 			@tags = unique_tags | @tags
 
