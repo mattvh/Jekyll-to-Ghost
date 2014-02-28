@@ -122,7 +122,7 @@ module Jekyll
 			tag_array = []
 			@tags.each do |tag|
 				tag_array.push({
-					"id" => (tag_array.size + 1),
+					"id" => tag_array.size,
 					"name" => tag,
 					"slug" => tag.downcase,
 					"description" => ""
