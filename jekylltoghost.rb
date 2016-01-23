@@ -53,7 +53,7 @@ module Jekyll
 
 		def generate(site)
 
-			converter = site.getConverterImpl(Jekyll::Converters::Markdown)
+			converter = site.find_converter_instance(Jekyll::Converters::Markdown)
 			ex_posts = []
 			id = 0
 
