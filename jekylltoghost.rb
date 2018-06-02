@@ -53,18 +53,18 @@ module Jekyll
 
 		def generate(site)
 
-			converter = site.getConverterImpl(Jekyll::Converters::Markdown)
+			converter = site.find_converter_instance(Jekyll::Converters::Markdown)
 			ex_posts = []
 			id = 0
 
-			site.posts.each do |post|
+			site.posts.docs.each do |post|
 
 				timestamp = post.date.to_i * 1000
 
 				ex_post = {
 					"id" => id,
-					"title" => post.title,
-					"slug" => post.slug,
+					"title" => post.data['title'],
+					"slug" => post.data['slug'],
 					"markdown" => post.content,
 					"html" => converter.convert(post.content),
 					"image" => nil,
@@ -85,7 +85,7 @@ module Jekyll
 
 				ex_posts.push(ex_post)
 
-				self.process_tags(id, post.tags, post.categories)
+				self.process_tags(id, post.data['tags'], post.data['categories'])
 				id += 1
 			end
 
