@@ -3,14 +3,13 @@
 # This Jekyll plugin exports your Markdown posts into a format that can be easily imported by Ghost.
 # http://ghost.org
 #
-# Author: Matt Harzewski
+# Author: Rose Lin (updated based on Matt Harzewski's work)
 # Copyright: Copyright 2013 Matt Harzewski
 # License: GPLv2 or later
-# Version: 1.0.0
+# Version: 1.0.1
 
 
 require 'json'
-
 
 
 module Jekyll
@@ -53,51 +52,57 @@ module Jekyll
 
 		def generate(site)
 
-			converter = site.getConverterImpl(Jekyll::Converters::Markdown)
+			converter = site.find_converter_instance(Jekyll::Converters::Markdown)
 			ex_posts = []
 			id = 0
 
-			site.posts.each do |post|
+			site.posts.docs.each do |post|
 
 				timestamp = post.date.to_i * 1000
-
+                
+                author_id = 1
+                if (defined?(post.data['author'])).nil?
+                    author_id = post.data['author']
+                end
+                
 				ex_post = {
 					"id" => id,
-					"title" => post.title,
-					"slug" => post.slug,
-					"markdown" => post.content,
+					"title" => post.data['title'],
+					"slug" => post.data['slug'],
+					#"markdown" => post.content,
 					"html" => converter.convert(post.content),
-					"image" => nil,
+                    "feature_image" => nil,
 					"featured" => 0,
 					"page" => 0,
 					"status" => "published",
-					"language" => "en_US",
-					"meta_title" => nil,
+                    "published_at" => timestamp,
+                    "published_by" => 1,
+                    "meta_title" => nil,
         			"meta_description" => nil,
-        			"author_id" => 1,
-        			"created_at" => timestamp,
+                    "author_id" => author_id,
+                    "created_at" => timestamp,
         			"created_by" => 1,
         			"updated_at" => timestamp,
-        			"updated_by" => 1,
-        			"published_at" => timestamp,
-        			"published_by" => 1
+        			"updated_by" => 1
 				}
 
 				ex_posts.push(ex_post)
 
-				self.process_tags(id, post.tags, post.categories)
+				self.process_tags(id, post.data['tags'], post.data['categories'])
 				id += 1
 			end
 
 			export_object = {
 				"meta" => {
 					"exported_on" => Time.now.to_i * 1000,
-					"version" => "000"
+					"version" => "2.14.0"
 				},
 				"data" => {
 					"posts" => ex_posts,
 					"tags" => self.tag_objects,
-					"posts_tags" => self.posts_tag_objects
+					"posts_tags" => self.posts_tag_objects,
+                    "users" => self.author_objects(site)
+                    # TODO: add roles_users
 				}
 			}
 
@@ -143,6 +148,39 @@ module Jekyll
 				end
 			end
 			return posts_tag_array
+		end
+        
+        def author_objects(site)
+			author_array = []
+            id = 1
+			
+            site.data.authors.each do |author|
+                
+				ex_author = {
+					"id" => id,
+					"name" => author.data['name'],
+					"slug" => nil,
+					"email" => author.data['email'] ? author.data['email'] : nil,
+					"profile_image" => author.data['profile_image'] ? author.data['profile_image'] : nil,
+                    "cover_image" => author.data['cover_image'] ? author.data['cover_image'] : nil,
+					"bio" => author.data['bio'] ? author.data['bio'] : nil,
+					"website" => author.data['website'] ? author.data['website'] : nil,
+					"location" => author.data['location'] ? author.data['location'] : nil,
+                    "accessibility" => author.data['accessibility'] ? author.data['accessibility'] : nil,
+                    "meta_title" => author.data['meta_title'] ? author.data['meta_title'] : nil,
+        			"meta_description" => author.data['meta_description'] ? author.data['meta_description'] : nil,
+                    "created_at" => timestamp,
+        			"created_by" => 1,
+        			"updated_at" => timestamp,
+        			"updated_by" => 1
+				}
+
+				author_array.push(ex_author)
+
+				id += 1
+			end
+            
+			return author_array
 		end
 
 	end
