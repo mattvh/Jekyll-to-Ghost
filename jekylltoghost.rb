@@ -154,7 +154,7 @@ module Jekyll
 			author_array = []
             id = 1
 			
-            site.data.key(authors).each do |author|
+            site.data.key('authors') do |author|
                 
 				ex_author = {
 					"id" => id,
