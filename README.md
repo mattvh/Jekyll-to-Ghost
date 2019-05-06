@@ -15,12 +15,12 @@ Installation
 1. Run `jekyll build`.
 2. There should now be a `ghost_export.json` file in the `_site` directory.
 3. Follow the Ghost guide [here](https://docs.ghost.org/api/migration/#converting-html) to convert the HTML block into **Mobiledoc** (this is what the new Ghost blog accepts).
-    * Core comment: `migrate json html /path/to/your/import.json` -> this line will generate a new JSON file with Mobiledoc entries added.
+    * Core command: `migrate json html /path/to/your/import.json` -> this line will generate a new JSON file with Mobiledoc entries added.
 4. Download the JSON file, (optional) edit the `users` section, and import it through the Ghost Lab tab.
 
 Right now the script is able to automatically extract authors information stored under the `_data` folder. **Please ensure that your xml/csv filename is "authors", otherwise the code needs to be changed so that the auto extraction function would work.** For posts that have no author information (or the site has NOT configured any author), the script will add a user named `default`. It is strongly encouraged that you change the default user information. 
 
-Starting from line 193 (or search `default_author`):
+Starting from line 193 of `jekylltoghost.rb` (or search `default_author`):
 
 ```
 default_author = {
@@ -43,9 +43,7 @@ default_author = {
             }
 ```
 
-You can change the fields based on your need. It's encouraged to have the same `slug` if you have already created a Ghost user. You can find it under the admin page > Staff > click on the desired user to open up details > slug.
-
-I'm still working on automatically extracting author information from site data folder, but in the mean time a workaround would be manually fill the info below and paste it to the `users` block in the converted JSON file ([source](https://docs.ghost.org/api/migration/#example)):
+You can change the fields based on your need. It's encouraged to have the same `slug` if you have already created a Ghost user, so that Ghost can aggregate all posts together. You can find it under the admin page > Staff > click on the desired user to open up details > slug.
 
 Questions
 ------------
