@@ -61,7 +61,7 @@ module Jekyll
 				timestamp = post.date.to_i * 1000
                 
                 author_id = 1
-                if (defined?(post.data['author'])).nil?
+                if !((post.data['author']).nil?)
                     author_id = post.data['author']
                 end
                 
@@ -152,33 +152,64 @@ module Jekyll
         
         def author_objects(site)
 			author_array = []
-            id = 1
-			
-            site.data.key('authors') do |author|
+            
+            # check if the site has any author information
+            is_author_set = false
+            if site.data.key?('authors')
+                is_author_set = true
+            end
+            
+            if is_author_set then
+                all_users = site.data['authors'].keys
                 
-				ex_author = {
-					"id" => id,
-					"name" => author.data['name'],
-					"slug" => nil,
-					"email" => author.data['email'] ? author.data['email'] : nil,
-					"profile_image" => author.data['profile_image'] ? author.data['profile_image'] : nil,
-                    "cover_image" => author.data['cover_image'] ? author.data['cover_image'] : nil,
-					"bio" => author.data['bio'] ? author.data['bio'] : nil,
-					"website" => author.data['website'] ? author.data['website'] : nil,
-					"location" => author.data['location'] ? author.data['location'] : nil,
-                    "accessibility" => author.data['accessibility'] ? author.data['accessibility'] : nil,
-                    "meta_title" => author.data['meta_title'] ? author.data['meta_title'] : nil,
-        			"meta_description" => author.data['meta_description'] ? author.data['meta_description'] : nil,
-                    "created_at" => timestamp,
-        			"created_by" => 1,
-        			"updated_at" => timestamp,
-        			"updated_by" => 1
-				}
+                for u in all_users do
+                    author = site.data['authors'][u]
+                    
+                    ex_author = {
+                        "id" => u,
+                        "name" => author['name'],
+                        "slug" => nil,
+                        "email" => author['email'] ? author['email'] : nil,
+                        "profile_image" => author['profile_image'] ? author['profile_image'] : nil,
+                        "cover_image" => author['cover_image'] ? author['cover_image'] : nil,
+                        "bio" => author['bio'] ? author['bio'] : nil,
+                        "website" => author['website'] ? author['website'] : nil,
+                        "location" => author['location'] ? author['location'] : nil,
+                        "accessibility" => author['accessibility'] ? author['accessibility'] : nil,
+                        "meta_title" => author['meta_title'] ? author['meta_title'] : nil,
+                        "meta_description" => author['meta_description'] ? author['meta_description'] : nil,
+                        "created_at" => Time.now.to_i * 1000,
+                        "created_by" => 1,
+                        "updated_at" => Time.now.to_i * 1000,
+                        "updated_by" => 1
+                    }
 
-				author_array.push(ex_author)
+                    author_array.push(ex_author)
 
-				id += 1
-			end
+                end
+            end
+            
+            # handle cases when there is no author information provided from the _data folder
+            default_author = {
+                "id" => 1,
+                "name" => "default", # Change this to your name
+                "slug" => nil, # Change this to your slug, or keep it nil. Ghost will automatically assign one if nil
+                "email" => "example@test.com", # Change this to your email
+                "profile_image" => nil, # Change this to your profile image url
+                "cover_image" =>  nil, # Change this to your cover image url
+                "bio" => nil, # Change this to your bio
+                "website" => "https://ghost.org/", # Change this to your website
+                "location" => nil, # Change this to your location
+                "accessibility" => nil, # Change this to your accessibility
+                "meta_title" => nil, # Change this to your meta title (optional)
+                "meta_description" => nil, # Change this to your meta description (optional)
+                "created_at" => Time.now.to_i * 1000,
+                "created_by" => 1,
+                "updated_at" => Time.now.to_i * 1000,
+                "updated_by" => 1
+            }
+                    
+            author_array.push(default_author)
             
 			return author_array
 		end

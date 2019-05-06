@@ -15,33 +15,41 @@ Installation
 1. Run `jekyll build`.
 2. There should now be a `ghost_export.json` file in the `_site` directory.
 3. Follow the Ghost guide [here](https://docs.ghost.org/api/migration/#converting-html) to convert the HTML block into **Mobiledoc** (this is what the new Ghost blog accepts).
-4. Download the JSON file, (optional) edit the `users` section, and import it in your Ghost dashboard.
+    * Core comment: `migrate json html /path/to/your/import.json` -> this line will generate a new JSON file with Mobiledoc entries added.
+4. Download the JSON file, (optional) edit the `users` section, and import it through the Ghost Lab tab.
+
+Right now the script is able to automatically extract authors information stored under the `_data` folder. **Please ensure that your xml/csv filename is "authors", otherwise the code needs to be changed so that the auto extraction function would work.** For posts that have no author information (or the site has NOT configured any author), the script will add a user named `default`. It is strongly encouraged that you change the default user information. 
+
+Starting from line 193 (or search `default_author`):
+
+```
+default_author = {
+                "id" => 1,
+                "name" => "default", # Change this to your name
+                "slug" => nil, # Change this to your slug, or keep it nil. Ghost will automatically assign one if nil
+                "email" => "example@test.com", # Change this to your email
+                "profile_image" => nil, # Change this to your profile image url
+                "cover_image" =>  nil, # Change this to your cover image url
+                "bio" => nil, # Change this to your bio
+                "website" => "https://ghost.org/", # Change this to your website
+                "location" => nil, # Change this to your location
+                "accessibility" => nil, # Change this to your accessibility
+                "meta_title" => nil, # Change this to your meta title (optional)
+                "meta_description" => nil, # Change this to your meta description (optional)
+                "created_at" => Time.now.to_i * 1000,
+                "created_by" => 1,
+                "updated_at" => Time.now.to_i * 1000,
+                "updated_by" => 1
+            }
+```
+
+You can change the fields based on your need. It's encouraged to have the same `slug` if you have already created a Ghost user. You can find it under the admin page > Staff > click on the desired user to open up details > slug.
 
 I'm still working on automatically extracting author information from site data folder, but in the mean time a workaround would be manually fill the info below and paste it to the `users` block in the converted JSON file ([source](https://docs.ghost.org/api/migration/#example)):
 
-```
-"users": [
-            {
-                "id":           3,
-                "name":         "Jo Bloggs",
-                "slug":         "jo-blogs",
-                "email":        "jo@example.com",
-                "profile_image": null,
-                "cover_image":   null,
-                "bio":           null,
-                "website":       null,
-                "location":      null,
-                "accessibility": null,
-                "meta_title":    null,
-                "meta_description": null,
-                "created_at":    1283780649000,
-                "created_by":    1,
-                "updated_at":    1286958624000,
-                "updated_by":    1
-            }
-        ],
-```
-
+Questions
+------------
+Please submit a PR/issue or contact the original author of the script.
 
 License
 -------
