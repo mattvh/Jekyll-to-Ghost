@@ -24,6 +24,8 @@ module Jekyll
 			@dir  = dir
 			@name = name
 			@contents = contents
+			@relative_path = File.join(*[@dir, @name].compact)
+			@extname = File.extname(@name)
 		end
 
 		def write(dest)
